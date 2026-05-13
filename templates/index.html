@@ -1,27 +1,23 @@
-{% extends "base.html" %}
-
-{% block content %}
-
 <h1>Recipes</h1>
 
-<div class="grid">
+{% for category, cat_recipes in recipes | groupby("category") %}
 
-{% for recipe in recipes %}
+  <h2>{{ category }}</h2>
 
-  <a class="card" href="/recipes/{{ recipe.slug }}.html">
+  {% for cuisine, cuisine_recipes in cat_recipes | groupby("cuisine") %}
 
-    <h2>{{ recipe.recipe_name }}</h2>
+    <h3>{{ cuisine }}</h3>
 
-    <p>
-      {{ recipe.category }} • {{ recipe.cuisine }}
-    </p>
+    <ul>
+    {% for recipe in cuisine_recipes %}
+      <li>
+        <a href="/recipes/{{ recipe.slug }}.html">
+          {{ recipe.recipe_name }}
+        </a>
+      </li>
+    {% endfor %}
+    </ul>
 
-    <p><small>Serves {{ recipe.servings }}</small></p>
-
-  </a>
+  {% endfor %}
 
 {% endfor %}
-
-</div>
-
-{% endblock %}
