@@ -12,8 +12,8 @@ from  jinja2 import Environment, FileSystemLoader
 #import google sheets data
 #  # remove edit?gid=0#gid=0 and use export?format=csv&gid=0 #  #
 recipes_url       = 'https://docs.google.com/spreadsheets/d/19EdezjfCuFwYmWSd4SKlamLAJeOOR2Yn7b2QFPCBN0s/export?format=csv&gid=0'
-ingredients_url   = 'https://docs.google.com/spreadsheets/d/19EdezjfCuFwYmWSd4SKlamLAJeOOR2Yn7b2QFPCBN0s/export?format=csv&gid=0' 
-instructions_url  = 'https://docs.google.com/spreadsheets/d/19EdezjfCuFwYmWSd4SKlamLAJeOOR2Yn7b2QFPCBN0s/export?format=csv&gid=0' 
+ingredients_url   = 'https://docs.google.com/spreadsheets/d/19EdezjfCuFwYmWSd4SKlamLAJeOOR2Yn7b2QFPCBN0s/export?format=csv&gid=1549265114' 
+instructions_url  = 'https://docs.google.com/spreadsheets/d/19EdezjfCuFwYmWSd4SKlamLAJeOOR2Yn7b2QFPCBN0s/export?format=csv&gid=112480317' 
 
 
 OUTPUT_DIR = "dist"
@@ -97,24 +97,22 @@ for _, recipe in recipes_df.iterrows():
     # Create slug
     # ------------------------
 
-    slug = slugify(recipe["title"])
+   slug = slugify(recipe["recipe_name"])
 
     # ------------------------
     # Build recipe object
     # ------------------------
 
-    recipe_data = {
-        "id": recipe_id,
-        "title": recipe["title"],
-        "description": recipe.get("description", ""),
-        "image": recipe.get("image", ""),
-        "prep_time": recipe.get("prep_time", ""),
-        "cook_time": recipe.get("cook_time", ""),
-        "servings": recipe.get("servings", ""),
-        "ingredients": recipe_ingredients,
-        "steps": recipe_steps,
-        "slug": slug
-    }
+recipe_data = {
+    "id": recipe_id,
+    "recipe_name": recipe["recipe_name"],
+    "servings": recipe.get("servings", ""),
+    "source": recipe.get("source", ""),
+    "category": recipe.get("category", ""),
+    "cuisine": recipe.get("cuisine", ""),
+    "ingredients": recipe_ingredients,
+    "steps": recipe_steps,
+    "slug": slug
 
     # ------------------------
     # Render HTML
