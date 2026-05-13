@@ -1,20 +1,11 @@
 <h1>{{ title }}</h1>
 
-{% for category, cuisines in grouped_recipes.items() %}
-  <h2>{{ category }}</h2>
-
-  {% for cuisine, recipes in cuisines.items() %}
-    <h3>{{ cuisine }}</h3>
-
-    <ul>
-      {% for recipe in recipes %}
-        <li>
-          <a href="/recipes/{{ recipe.slug }}.html">
-            {{ recipe.recipe_name }}
-          </a>
-        </li>
-      {% endfor %}
-    </ul>
-
+<ul>
+  {% for category in categories %}
+    <li>
+      <a href="/category/{{ category|lower|replace(' ', '-') }}/">
+        {{ category }}
+      </a>
+    </li>
   {% endfor %}
-{% endfor %}
+</ul>
