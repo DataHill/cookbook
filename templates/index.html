@@ -1,1 +1,27 @@
+{% extends "base.html" %}
 
+{% block content %}
+
+<h1>Recipes</h1>
+
+<div class="grid">
+
+{% for recipe in recipes %}
+
+  <a class="card" href="/recipes/{{ recipe.slug }}.html">
+
+    <h2>{{ recipe.recipe_name }}</h2>
+
+    <p>
+      {{ recipe.category }} • {{ recipe.cuisine }}
+    </p>
+
+    <p><small>Serves {{ recipe.servings }}</small></p>
+
+  </a>
+
+{% endfor %}
+
+</div>
+
+{% endblock %}
