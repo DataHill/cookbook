@@ -90,6 +90,7 @@ for _, recipe in recipes_df.iterrows():
     steps = instructions_df[instructions_df["recipe_id"] == recipe_id].sort_values("step").to_dict("records")
 
     category = clean(recipe.get("category"))
+    cuisine = clean(recipe.get("cuisine"))
     slug = slugify(recipe["recipe_name"])
 
     recipe_data = {
