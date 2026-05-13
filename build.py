@@ -5,6 +5,7 @@ import pandas as pd
 from jinja2 import Environment, FileSystemLoader
 from collections import defaultdict
 
+
 # ============================================
 # CONFIG
 # ============================================
