@@ -1,10 +1,10 @@
 <h1>{{ category }}</h1>
 
 <ul>
-  {% for cuisine in cuisines %}
+  {% for recipe in recipes %}
     <li>
-      <a href="{{ cuisine|lower|replace(' ', '-') }}/">
-        {{ cuisine }}
+      <a href="/recipes/{{ recipe.slug }}.html">
+        {{ recipe.recipe_name }}
       </a>
     </li>
   {% endfor %}
