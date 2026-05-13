@@ -97,6 +97,7 @@ for _, recipe in recipes_df.iterrows():
         "slug": slug
     }
 
+
     # Save recipe page
     recipe_html = recipe_template.render(recipe=recipe_data, title=recipe_data["recipe_name"])
 
@@ -105,6 +106,9 @@ for _, recipe in recipes_df.iterrows():
 
     structure[category][cuisine].append(recipe_data)
     all_recipes.append(recipe_data)
+
+
+print("CATEGORIES:", list(structure.keys()))
 
 # ============================================
 # INDEX PAGE (CATEGORIES ONLY)
