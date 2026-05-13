@@ -17,15 +17,17 @@ instructions_url = "https://docs.google.com/spreadsheets/d/19EdezjfCuFwYmWSd4SKl
 
 OUTPUT_DIR = "dist"
 RECIPE_OUTPUT_DIR = os.path.join(OUTPUT_DIR, "recipes")
+CATEGORY_DIR = os.path.join(OUTPUT_DIR, "category")
 
 # ============================================
-# CLEAN OLD BUILD
+# CLEAN BUILD
 # ============================================
 
 if os.path.exists(OUTPUT_DIR):
     shutil.rmtree(OUTPUT_DIR)
 
 os.makedirs(RECIPE_OUTPUT_DIR)
+os.makedirs(CATEGORY_DIR)
 
 # ============================================
 # LOAD DATA
@@ -39,11 +41,11 @@ instructions_df = pd.read_csv(instructions_url)
 # TEMPLATE ENGINE
 # ============================================
 
-env = Environment(
-    loader=FileSystemLoader("templates")
-)
+env = Environment(loader=FileSystemLoader("templates"))
 
 index_template = env.get_template("index.html")
+category_template = env.get_template("category.html")
+cuisine_template = env.get_template("cuisine.html")
 recipe_template = env.get_template("recipe.html")
 
 # ============================================
@@ -55,114 +57,113 @@ def slugify(text):
     text = re.sub(r"[^a-z0-9]+", "-", text)
     return text.strip("-")
 
-def clean_value(val, fallback="Uncategorised"):
+def clean(val):
     if pd.isna(val) or str(val).strip() == "":
-        return fallback
+        return "Uncategorised"
     return str(val).strip()
 
 # ============================================
-# BUILD RECIPE PAGES + GROUP DATA
+# DATA STRUCTURE
 # ============================================
 
-grouped_recipes = defaultdict(lambda: defaultdict(list))
+structure = defaultdict(lambda: defaultdict(list))
+
+all_recipes = []
+
+# ============================================
+# BUILD RECIPES
+# ============================================
 
 for _, recipe in recipes_df.iterrows():
 
     recipe_id = recipe["recipe_id"]
 
-    # ------------------------
-    # Get ingredients
-    # ------------------------
-    recipe_ingredients = ingredients_df[
-        ingredients_df["recipe_id"] == recipe_id
-    ].to_dict(orient="records")
+    ingredients = ingredients_df[ingredients_df["recipe_id"] == recipe_id].to_dict("records")
+    steps = instructions_df[instructions_df["recipe_id"] == recipe_id].sort_values("step").to_dict("records")
 
-    # ------------------------
-    # Get instructions
-    # ------------------------
-    recipe_steps = instructions_df[
-        instructions_df["recipe_id"] == recipe_id
-    ].sort_values("step").to_dict(orient="records")
-
-    # ------------------------
-    # Create slug
-    # ------------------------
+    category = clean(recipe.get("category"))
+    cuisine = clean(recipe.get("cuisine"))
     slug = slugify(recipe["recipe_name"])
 
-    # ------------------------
-    # Build recipe object
-    # ------------------------
     recipe_data = {
         "id": recipe_id,
         "recipe_name": recipe["recipe_name"],
         "servings": recipe.get("servings", ""),
         "source": recipe.get("source", ""),
-        "category": clean_value(recipe.get("category")),
-        "cuisine": clean_value(recipe.get("cuisine")),
-        "ingredients": recipe_ingredients,
-        "steps": recipe_steps,
+        "category": category,
+        "cuisine": cuisine,
+        "ingredients": ingredients,
+        "steps": steps,
         "slug": slug
     }
 
-    # ------------------------
-    # Render recipe page
-    # ------------------------
-    recipe_html = recipe_template.render(
-        recipe=recipe_data,
-        title=recipe["recipe_name"]
-    )
+    # Save recipe page
+    recipe_html = recipe_template.render(recipe=recipe_data, title=recipe_data["recipe_name"])
 
-    output_path = os.path.join(
-        RECIPE_OUTPUT_DIR,
-        f"{slug}.html"
-    )
-
-    with open(output_path, "w", encoding="utf-8") as f:
+    with open(os.path.join(RECIPE_OUTPUT_DIR, f"{slug}.html"), "w", encoding="utf-8") as f:
         f.write(recipe_html)
 
-    print(f"Built recipe: {slug}")
-
-    # ------------------------
-    # GROUPING (Category → Cuisine)
-    # ------------------------
-    category = recipe_data["category"]
-    cuisine = recipe_data["cuisine"]
-
-    grouped_recipes[category][cuisine].append(recipe_data)
+    structure[category][cuisine].append(recipe_data)
+    all_recipes.append(recipe_data)
 
 # ============================================
-# BUILD HOMEPAGE
+# INDEX PAGE (CATEGORIES ONLY)
 # ============================================
 
-homepage_html = index_template.render(
-    grouped_recipes=grouped_recipes,
-    title="Recipe Website",
-    description="Easy homemade recipes"
+index_html = index_template.render(
+    categories=sorted(structure.keys()),
+    title="Recipes"
 )
 
-with open(
-    os.path.join(OUTPUT_DIR, "index.html"),
-    "w",
-    encoding="utf-8"
-) as f:
-    f.write(homepage_html)
-
-print("Built homepage")
+with open(os.path.join(OUTPUT_DIR, "index.html"), "w", encoding="utf-8") as f:
+    f.write(index_html)
 
 # ============================================
-# COPY STATIC FILES
+# CATEGORY PAGES (SHOW CUISINES)
+# ============================================
+
+for category, cuisines in structure.items():
+
+    category_slug = slugify(category)
+
+    category_html = category_template.render(
+        category=category,
+        cuisines=sorted(cuisines.keys())
+    )
+
+    folder = os.path.join(CATEGORY_DIR, category_slug)
+    os.makedirs(folder, exist_ok=True)
+
+    with open(os.path.join(folder, "index.html"), "w", encoding="utf-8") as f:
+        f.write(category_html)
+
+# ============================================
+# CUISINE PAGES (SHOW RECIPES)
+# ============================================
+
+for category, cuisines in structure.items():
+    for cuisine, recipes in cuisines.items():
+
+        category_slug = slugify(category)
+        cuisine_slug = slugify(cuisine)
+
+        cuisine_html = cuisine_template.render(
+            category=category,
+            cuisine=cuisine,
+            recipes=recipes
+        )
+
+        folder = os.path.join(CATEGORY_DIR, category_slug, cuisine_slug)
+        os.makedirs(folder, exist_ok=True)
+
+        with open(os.path.join(folder, "index.html"), "w", encoding="utf-8") as f:
+            f.write(cuisine_html)
+
+# ============================================
+# STATIC FILES
 # ============================================
 
 if os.path.exists("static"):
-    shutil.copytree(
-        "static",
-        OUTPUT_DIR,
-        dirs_exist_ok=True
-    )
-    print("Copied static files")
+    shutil.copytree("static", OUTPUT_DIR, dirs_exist_ok=True)
 
-# ============================================
-# BUILD COMPLETE
-# ============================================
-
-print("Site build complete")
+print("Build complete")
