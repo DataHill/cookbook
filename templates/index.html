@@ -1,83 +1,71 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Recipes</title>
-  <style>
-    body { font-family: Arial; margin: 20px; }
+    <title>{{ title }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: auto;
+            padding: 20px;
+        }
 
-    .search {
-      width: 100%;
-      padding: 12px;
-      font-size: 16px;
-      margin-bottom: 15px;
-    }
+        h1, h2, h3 {
+            margin-top: 30px;
+        }
 
-    .filters {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 20px;
-    }
+        .category {
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
 
-    .chip {
-      padding: 6px 12px;
-      border: 1px solid #ccc;
-      border-radius: 20px;
-      cursor: pointer;
-    }
+        .cuisine {
+            margin-left: 20px;
+            margin-top: 15px;
+        }
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 16px;
-    }
+        .recipe-list {
+            margin-left: 40px;
+        }
 
-    .card {
-      border: 1px solid #eee;
-      border-radius: 12px;
-      padding: 12px;
-      transition: 0.2s;
-    }
+        a {
+            display: block;
+            padding: 4px 0;
+            text-decoration: none;
+            color: #333;
+        }
 
-    .card:hover {
-      transform: scale(1.02);
-    }
-
-    .tag {
-      font-size: 12px;
-      color: #666;
-    }
-  </style>
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 
 <body>
 
-<h1>Recipes</h1>
+<h1>{{ title }}</h1>
 
-<input class="search" placeholder="Search recipes...">
+{% for category, cuisines in grouped.items() %}
+<div class="category">
+    <h2>{{ category }}</h2>
 
-<div class="filters">
-  <div class="chip">All</div>
-  <div class="chip">Chicken</div>
-  <div class="chip">Beef</div>
-  <div class="chip">Veg</div>
-</div>
+    {% for cuisine, recipes in cuisines.items() %}
+    <div class="cuisine">
+        <h3>{{ cuisine }}</h3>
 
-<div class="grid">
-
-  {% for recipe in recipes %}
-  <a class="card" href="/recipes/{{ recipe.slug }}.html">
-
-    <div><strong>{{ recipe.recipe_name }}</strong></div>
-
-    <div class="tag">
-      {{ recipe.category }} · {{ recipe.cuisine }}
+        <div class="recipe-list">
+            {% for recipe in recipes %}
+                <a href="recipes/{{ recipe.slug }}.html">
+                    {{ recipe.recipe_name }}
+                </a>
+            {% endfor %}
+        </div>
     </div>
-
-  </a>
-  {% endfor %}
+    {% endfor %}
 
 </div>
+{% endfor %}
 
 </body>
 </html>
