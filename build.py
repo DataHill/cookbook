@@ -91,7 +91,7 @@ for _, recipe in recipes_df.iterrows():
 
     recipe_steps = instructions_df[
         instructions_df["recipe_id"] == recipe_id
-    ].sort_values("step_number").to_dict(orient="records")
+    ].sort_values("step").to_dict(orient="records")
 
     # ------------------------
     # Create slug
