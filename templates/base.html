@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ title or "Recipe Site" }}</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+
+<body>
+
+<header>
+  <h1><a href="/">My Recipes</a></h1>
+</header>
+
+<main>
+  {% block content %}{% endblock %}
+</main>
+
+</body>
+</html>
