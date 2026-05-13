@@ -37,6 +37,16 @@ recipes_df = pd.read_csv(recipes_url)
 ingredients_df = pd.read_csv(ingredients_url)
 instructions_df = pd.read_csv(instructions_url)
 
+#remove empty rows
+def clean_df(df):
+    df = df.dropna(how="all")
+    df = df[df["recipe_id"].notna()]
+    return df
+
+recipes_df = clean_df(recipes_df)
+ingredients_df = clean_df(ingredients_df)
+instructions_df = clean_df(instructions_df)
+
 # ============================================
 # TEMPLATE ENGINE
 # ============================================
