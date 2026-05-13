@@ -2,19 +2,17 @@ import os
 import re
 import shutil
 import pandas as pd
-from  jinja2 import Environment, FileSystemLoader
+from jinja2 import Environment, FileSystemLoader
 
 # ============================================
 # CONFIG
 # ============================================
 
+recipes_url = "https://docs.google.com/spreadsheets/d/19EdezjfCuFwYmWSd4SKlamLAJeOOR2Yn7b2QFPCBN0s/export?format=csv&gid=0"
 
-#import google sheets data
-#  # remove edit?gid=0#gid=0 and use export?format=csv&gid=0 #  #
-recipes_url       = 'https://docs.google.com/spreadsheets/d/19EdezjfCuFwYmWSd4SKlamLAJeOOR2Yn7b2QFPCBN0s/export?format=csv&gid=0'
-ingredients_url   = 'https://docs.google.com/spreadsheets/d/19EdezjfCuFwYmWSd4SKlamLAJeOOR2Yn7b2QFPCBN0s/export?format=csv&gid=1549265114' 
-instructions_url  = 'https://docs.google.com/spreadsheets/d/19EdezjfCuFwYmWSd4SKlamLAJeOOR2Yn7b2QFPCBN0s/export?format=csv&gid=112480317' 
+ingredients_url = "https://docs.google.com/spreadsheets/d/19EdezjfCuFwYmWSd4SKlamLAJeOOR2Yn7b2QFPCBN0s/export?format=csv&gid=1549265114"
 
+instructions_url = "https://docs.google.com/spreadsheets/d/19EdezjfCuFwYmWSd4SKlamLAJeOOR2Yn7b2QFPCBN0s/export?format=csv&gid=112480317"
 
 OUTPUT_DIR = "dist"
 RECIPE_OUTPUT_DIR = os.path.join(OUTPUT_DIR, "recipes")
@@ -32,9 +30,8 @@ os.makedirs(RECIPE_OUTPUT_DIR)
 # LOAD DATA
 # ============================================
 
-
-recipes_df      = pd.read_csv(recipes_url)
-ingredients_df  = pd.read_csv(ingredients_url)
+recipes_df = pd.read_csv(recipes_url)
+ingredients_df = pd.read_csv(ingredients_url)
 instructions_df = pd.read_csv(instructions_url)
 
 # ============================================
@@ -53,19 +50,9 @@ recipe_template = env.get_template("recipe.html")
 # ============================================
 
 def slugify(text):
-    """
-    Convert:
-    'Chicken Katsu Curry'
-    into:
-    'chicken-katsu-curry'
-    """
-
-    text = text.lower()
-
+    text = str(text).lower()
     text = re.sub(r"[^a-z0-9]+", "-", text)
-
     return text.strip("-")
-
 
 # ============================================
 # BUILD RECIPE PAGES
@@ -80,7 +67,6 @@ for _, recipe in recipes_df.iterrows():
     # ------------------------
     # Get ingredients
     # ------------------------
-
     recipe_ingredients = ingredients_df[
         ingredients_df["recipe_id"] == recipe_id
     ].to_dict(orient="records")
@@ -88,7 +74,6 @@ for _, recipe in recipes_df.iterrows():
     # ------------------------
     # Get instructions
     # ------------------------
-
     recipe_steps = instructions_df[
         instructions_df["recipe_id"] == recipe_id
     ].sort_values("step").to_dict(orient="records")
@@ -96,38 +81,34 @@ for _, recipe in recipes_df.iterrows():
     # ------------------------
     # Create slug
     # ------------------------
-
-   slug = slugify(recipe["recipe_name"])
+    slug = slugify(recipe["recipe_name"])
 
     # ------------------------
     # Build recipe object
     # ------------------------
-
-recipe_data = {
-    "id": recipe_id,
-    "recipe_name": recipe["recipe_name"],
-    "servings": recipe.get("servings", ""),
-    "source": recipe.get("source", ""),
-    "category": recipe.get("category", ""),
-    "cuisine": recipe.get("cuisine", ""),
-    "ingredients": recipe_ingredients,
-    "steps": recipe_steps,
-    "slug": slug
+    recipe_data = {
+        "id": recipe_id,
+        "recipe_name": recipe["recipe_name"],
+        "servings": recipe.get("servings", ""),
+        "source": recipe.get("source", ""),
+        "category": recipe.get("category", ""),
+        "cuisine": recipe.get("cuisine", ""),
+        "ingredients": recipe_ingredients,
+        "steps": recipe_steps,
+        "slug": slug
+    }
 
     # ------------------------
     # Render HTML
     # ------------------------
-
     recipe_html = recipe_template.render(
         recipe=recipe_data,
-        title=recipe["title"],
-        description=recipe.get("description", "")
+        title=recipe["recipe_name"]
     )
 
     # ------------------------
     # Save recipe page
     # ------------------------
-
     output_path = os.path.join(
         RECIPE_OUTPUT_DIR,
         f"{slug}.html"
@@ -155,7 +136,6 @@ with open(
     "w",
     encoding="utf-8"
 ) as f:
-
     f.write(homepage_html)
 
 print("Built homepage")
@@ -165,13 +145,11 @@ print("Built homepage")
 # ============================================
 
 if os.path.exists("static"):
-
     shutil.copytree(
         "static",
         OUTPUT_DIR,
         dirs_exist_ok=True
     )
-
     print("Copied static files")
 
 # ============================================
