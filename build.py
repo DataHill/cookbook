@@ -3,6 +3,7 @@ import re
 import shutil
 import pandas as pd
 from jinja2 import Environment, FileSystemLoader
+from collections import defaultdict
 
 # ============================================
 # CONFIG
@@ -54,11 +55,16 @@ def slugify(text):
     text = re.sub(r"[^a-z0-9]+", "-", text)
     return text.strip("-")
 
+def clean_value(val, fallback="Uncategorised"):
+    if pd.isna(val) or str(val).strip() == "":
+        return fallback
+    return str(val).strip()
+
 # ============================================
-# BUILD RECIPE PAGES
+# BUILD RECIPE PAGES + GROUP DATA
 # ============================================
 
-all_recipes = []
+grouped_recipes = defaultdict(lambda: defaultdict(list))
 
 for _, recipe in recipes_df.iterrows():
 
@@ -91,24 +97,21 @@ for _, recipe in recipes_df.iterrows():
         "recipe_name": recipe["recipe_name"],
         "servings": recipe.get("servings", ""),
         "source": recipe.get("source", ""),
-        "category": recipe.get("category", ""),
-        "cuisine": recipe.get("cuisine", ""),
+        "category": clean_value(recipe.get("category")),
+        "cuisine": clean_value(recipe.get("cuisine")),
         "ingredients": recipe_ingredients,
         "steps": recipe_steps,
         "slug": slug
     }
 
     # ------------------------
-    # Render HTML
+    # Render recipe page
     # ------------------------
     recipe_html = recipe_template.render(
         recipe=recipe_data,
         title=recipe["recipe_name"]
     )
 
-    # ------------------------
-    # Save recipe page
-    # ------------------------
     output_path = os.path.join(
         RECIPE_OUTPUT_DIR,
         f"{slug}.html"
@@ -119,14 +122,20 @@ for _, recipe in recipes_df.iterrows():
 
     print(f"Built recipe: {slug}")
 
-    all_recipes.append(recipe_data)
+    # ------------------------
+    # GROUPING (Category → Cuisine)
+    # ------------------------
+    category = recipe_data["category"]
+    cuisine = recipe_data["cuisine"]
+
+    grouped_recipes[category][cuisine].append(recipe_data)
 
 # ============================================
 # BUILD HOMEPAGE
 # ============================================
 
 homepage_html = index_template.render(
-    recipes=all_recipes,
+    grouped_recipes=grouped_recipes,
     title="Recipe Website",
     description="Easy homemade recipes"
 )
