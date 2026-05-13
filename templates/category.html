@@ -1,1 +1,11 @@
+<h1>{{ category }}</h1>
 
+<ul>
+  {% for cuisine in cuisines %}
+    <li>
+      <a href="{{ cuisine|lower|replace(' ', '-') }}/">
+        {{ cuisine }}
+      </a>
+    </li>
+  {% endfor %}
+</ul>
