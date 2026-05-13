@@ -1,23 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Recipes</title>
+  <style>
+    body { font-family: Arial; margin: 20px; }
+
+    .search {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      margin-bottom: 15px;
+    }
+
+    .filters {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .chip {
+      padding: 6px 12px;
+      border: 1px solid #ccc;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      border: 1px solid #eee;
+      border-radius: 12px;
+      padding: 12px;
+      transition: 0.2s;
+    }
+
+    .card:hover {
+      transform: scale(1.02);
+    }
+
+    .tag {
+      font-size: 12px;
+      color: #666;
+    }
+  </style>
+</head>
+
+<body>
+
 <h1>Recipes</h1>
 
-{% for category, cat_recipes in recipes | groupby("category") %}
+<input class="search" placeholder="Search recipes...">
 
-  <h2>{{ category }}</h2>
+<div class="filters">
+  <div class="chip">All</div>
+  <div class="chip">Chicken</div>
+  <div class="chip">Beef</div>
+  <div class="chip">Veg</div>
+</div>
 
-  {% for cuisine, cuisine_recipes in cat_recipes | groupby("cuisine") %}
+<div class="grid">
 
-    <h3>{{ cuisine }}</h3>
+  {% for recipe in recipes %}
+  <a class="card" href="/recipes/{{ recipe.slug }}.html">
 
-    <ul>
-    {% for recipe in cuisine_recipes %}
-      <li>
-        <a href="/recipes/{{ recipe.slug }}.html">
-          {{ recipe.recipe_name }}
-        </a>
-      </li>
-    {% endfor %}
-    </ul>
+    <div><strong>{{ recipe.recipe_name }}</strong></div>
 
+    <div class="tag">
+      {{ recipe.category }} · {{ recipe.cuisine }}
+    </div>
+
+  </a>
   {% endfor %}
 
-{% endfor %}
+</div>
+
+</body>
+</html>
