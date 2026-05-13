@@ -1,1 +1,49 @@
-<!DOCTYPE html>
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>{{ recipe.recipe_name }}</h1>
+
+<p>
+  <strong>Servings:</strong> {{ recipe.servings }} |
+  <strong>Category:</strong> {{ recipe.category }} |
+  <strong>Cuisine:</strong> {{ recipe.cuisine }}
+</p>
+
+{% if recipe.source %}
+<p><small>Source: {{ recipe.source }}</small></p>
+{% endif %}
+
+<hr>
+
+<h2>Ingredients</h2>
+
+<ul>
+{% for item in recipe.ingredients %}
+  <li>
+    {{ item.amount }} {{ item.unit }} {{ item.ingredient }}
+
+    {% if item.optional %}
+      <em>(optional)</em>
+    {% endif %}
+  </li>
+{% endfor %}
+</ul>
+
+<hr>
+
+<h2>Method</h2>
+
+<ol>
+{% for step in recipe.steps %}
+  <li>
+    {{ step.instruction }}
+
+    {% if step.time_min %}
+      <small>({{ step.time_min }} min)</small>
+    {% endif %}
+  </li>
+{% endfor %}
+</ol>
+
+{% endblock %}
