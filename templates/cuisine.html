@@ -1,0 +1,11 @@
+<h1>{{ category }} - {{ cuisine }}</h1>
+
+<ul>
+  {% for recipe in recipes %}
+    <li>
+      <a href="/recipes/{{ recipe.slug }}.html">
+        {{ recipe.recipe_name }}
+      </a>
+    </li>
+  {% endfor %}
+</ul>
