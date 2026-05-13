@@ -98,6 +98,7 @@ for _, recipe in recipes_df.iterrows():
         "servings": recipe.get("servings", ""),
         "source": recipe.get("source", ""),
         "category": category,
+        "cuisine": cuisine,
         "ingredients": ingredients,
         "steps": steps,
         "slug": slug
