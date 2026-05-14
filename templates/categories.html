@@ -2,20 +2,109 @@
 
 {% block content %}
 
-<h1>Recipe Categories</h1>
+<div class="page-wrapper">
+  <div class="page-header">
+    <h1>Recipe Categories</h1>
+    <p>Browse recipes by type below.</p>
+  </div>
 
-<p>
-  Browse recipes by type below.
-</p>
-
-<ul>
-  {% for category in categories %}
-    <li>
-      <a href="/category/{{ category|lower|replace(' ', '-') }}/">
-        {{ category }}
+  <div class="category-grid">
+    {% for category in categories %}
+      <a
+        href="/category/{{ category|lower|replace(' ', '-') }}/"
+        class="category-card"
+      >
+        <div class="category-content">
+          <h2>{{ category }}</h2>
+          <span>Browse Recipes →</span>
+        </div>
       </a>
-    </li>
-  {% endfor %}
-</ul>
+    {% endfor %}
+  </div>
+</div>
+
+<style>
+  body {
+    font-family: Inter, sans-serif;
+    background: #f7f7f7;
+    color: #222;
+    padding: 40px 20px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .page-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .page-header h1 {
+    margin: 0 0 10px;
+    font-size: 3rem;
+    line-height: 1.1;
+  }
+
+  .page-header p {
+    margin: 0;
+    color: #666;
+    font-size: 1rem;
+  }
+
+  .category-grid {
+    display: grid;
+    gap: 18px;
+  }
+
+  .category-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    background: white;
+    border: 1px solid #e5e5e5;
+    border-radius: 18px;
+    padding: 24px;
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease,
+      border-color 0.2s ease;
+  }
+
+  .category-card:hover {
+    transform: translateY(-3px);
+    border-color: #ccc;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+  }
+
+  .category-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .category-content h2 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+
+  .category-content span {
+    color: #666;
+    font-size: 0.95rem;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 640px) {
+    .page-header h1 {
+      font-size: 2.2rem;
+    }
+
+    .category-content {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+</style>
 
 {% endblock %}
