@@ -2,20 +2,26 @@
 
 {% block content %}
 
-<h1>Recipe Categories</h1>
+<h1>Welcome to My Recipe Book</h1>
 
 <p>
-  Browse recipes by type below.
+  Add your introduction text here.
 </p>
 
-<ul>
-  {% for category in categories %}
-    <li>
-      <a href="/category/{{ category|lower|replace(' ', '-') }}/">
-        {{ category }}
-      </a>
-    </li>
-  {% endfor %}
-</ul>
+<p>
+  Browse recipes organised by category.
+</p>
+
+<a href="/categories.html" style="
+  display:inline-block;
+  margin-top:20px;
+  padding:12px 18px;
+  background:#222;
+  color:#fff;
+  text-decoration:none;
+  border-radius:6px;
+">
+  Browse Recipe Categories
+</a>
 
 {% endblock %}
