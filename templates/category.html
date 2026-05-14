@@ -1,23 +1,123 @@
-<a href="/index.html" style="
-  display:inline-block;
-  margin-bottom:15px;
-  padding:10px 14px;
-  background:#222;
-  color:#fff;
-  border-radius:6px;
-  text-decoration:none;
-">
-  ← Back to Home
+<a href="/index.html" class="back-link">
+  <span>←</span>
+  Back to Home
 </a>
 
-<h1>{{ category }}</h1>
+<div class="page-header">
+  <h1>{{ category }}</h1>
+  <p>{{ recipes|length }} recipes</p>
+</div>
 
-<ul>
+<div class="recipe-grid">
   {% for recipe in recipes %}
-    <li>
-      <a href="/recipes/{{ recipe.slug }}.html">
-        {{ recipe.recipe_name }}
-      </a>
-    </li>
+    <a href="/recipes/{{ recipe.slug }}.html" class="recipe-card">
+      <div class="recipe-card-content">
+        <h2>{{ recipe.recipe_name }}</h2>
+        <span class="view-recipe">
+          View Recipe →
+        </span>
+      </div>
+    </a>
   {% endfor %}
-</ul>
+</div>
+
+<style>
+  body {
+    font-family: Inter, sans-serif;
+    background: #f7f7f7;
+    color: #222;
+    padding: 40px 20px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 28px;
+    padding: 10px 16px;
+    background: white;
+    color: #222;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+
+  .back-link:hover {
+    background: #222;
+    color: white;
+    transform: translateY(-1px);
+  }
+
+  .page-header {
+    margin-bottom: 32px;
+  }
+
+  .page-header h1 {
+    font-size: 2.5rem;
+    margin: 0 0 8px;
+  }
+
+  .page-header p {
+    margin: 0;
+    color: #666;
+    font-size: 0.95rem;
+  }
+
+  .recipe-grid {
+    display: grid;
+    gap: 18px;
+  }
+
+  .recipe-card {
+    text-decoration: none;
+    color: inherit;
+    background: white;
+    border-radius: 16px;
+    padding: 22px;
+    border: 1px solid #e5e5e5;
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease,
+      border-color 0.2s ease;
+  }
+
+  .recipe-card:hover {
+    transform: translateY(-3px);
+    border-color: #ccc;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+  }
+
+  .recipe-card-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .recipe-card h2 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  .view-recipe {
+    color: #666;
+    font-size: 0.95rem;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 640px) {
+    .recipe-card-content {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .page-header h1 {
+      font-size: 2rem;
+    }
+  }
+</style>
