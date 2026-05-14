@@ -41,7 +41,10 @@ ingredients_df = pd.read_csv(ingredients_url)
 instructions_df = pd.read_csv(instructions_url)
 
 
-# remove empty rows
+# ============================================
+# CLEAN DATA
+# ============================================
+
 def clean_df(df):
     df = df.dropna(how="all")
     df = df[df["recipe_id"].notna()]
@@ -59,9 +62,16 @@ instructions_df = clean_df(instructions_df)
 
 env = Environment(loader=FileSystemLoader("templates"))
 
-home_template = env.get_template("home.html")
+# homepage
 index_template = env.get_template("index.html")
+
+# category listing page
+categories_template = env.get_template("categories.html")
+
+# individual category page
 category_template = env.get_template("category.html")
+
+# recipe page
 recipe_template = env.get_template("recipe.html")
 
 
@@ -78,6 +88,7 @@ def slugify(text):
 def clean(val):
     if pd.isna(val) or str(val).strip() == "":
         return "Uncategorised"
+
     return str(val).strip()
 
 
@@ -89,7 +100,7 @@ structure = defaultdict(list)
 
 
 # ============================================
-# BUILD RECIPES
+# BUILD RECIPE PAGES
 # ============================================
 
 for _, recipe in recipes_df.iterrows():
@@ -134,7 +145,7 @@ for _, recipe in recipes_df.iterrows():
     ) as f:
         f.write(recipe_html)
 
-    # add to category structure
+    # store by category
     structure[category].append(recipe_data)
 
 
@@ -149,25 +160,8 @@ print("CATEGORIES:", list(structure.keys()))
 # BUILD HOME PAGE
 # ============================================
 
-home_html = home_template.render(
+home_html = index_template.render(
     title="Home"
-)
-
-with open(
-    os.path.join(OUTPUT_DIR, "home.html"),
-    "w",
-    encoding="utf-8"
-) as f:
-    f.write(home_html)
-
-
-# ============================================
-# BUILD CATEGORY INDEX PAGE
-# ============================================
-
-index_html = index_template.render(
-    categories=sorted(structure.keys()),
-    title="Recipe Categories"
 )
 
 with open(
@@ -175,7 +169,24 @@ with open(
     "w",
     encoding="utf-8"
 ) as f:
-    f.write(index_html)
+    f.write(home_html)
+
+
+# ============================================
+# BUILD CATEGORY LIST PAGE
+# ============================================
+
+categories_html = categories_template.render(
+    categories=sorted(structure.keys()),
+    title="Recipe Categories"
+)
+
+with open(
+    os.path.join(OUTPUT_DIR, "categories.html"),
+    "w",
+    encoding="utf-8"
+) as f:
+    f.write(categories_html)
 
 
 # ============================================
@@ -209,6 +220,7 @@ for category, recipes in structure.items():
 # ============================================
 
 if os.path.exists("static"):
+
     shutil.copytree(
         "static",
         OUTPUT_DIR,
