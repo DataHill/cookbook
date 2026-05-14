@@ -2,48 +2,191 @@
 
 {% block content %}
 
-<h1>{{ recipe.recipe_name }}</h1>
+<div class="recipe-page">
 
-<p>
-  <strong>Servings:</strong> {{ recipe.servings }} |
-  <strong>Category:</strong> {{ recipe.category }} |
-  <strong>Cuisine:</strong> {{ recipe.cuisine }}
-</p>
+  <div class="recipe-hero">
+    <h1>{{ recipe.recipe_name }}</h1>
 
-{% if recipe.source %}
-<p><small>Source: {{ recipe.source }}</small></p>
-{% endif %}
+    <div class="recipe-meta">
+      <span><strong>Servings:</strong> {{ recipe.servings }}</span>
+      <span><strong>Category:</strong> {{ recipe.category }}</span>
+      <span><strong>Cuisine:</strong> {{ recipe.cuisine }}</span>
+    </div>
 
-<hr>
-
-<h2>Ingredients</h2>
-
-<ul>
-{% for item in recipe.ingredients %}
-  <li>
-    {{ item.amount }} {{ item.unit }} {{ item.ingredient }}
-
-    {% if item.optional %}
-      <em>(optional)</em>
+    {% if recipe.source %}
+      <p class="recipe-source">
+        Source: {{ recipe.source }}
+      </p>
     {% endif %}
-  </li>
-{% endfor %}
-</ul>
+  </div>
 
-<hr>
+  <div class="content-grid">
 
-<h2>Method</h2>
+    <section class="card">
+      <h2>Ingredients</h2>
 
-<ol>
-{% for step in recipe.steps %}
-  <li>
-    {{ step.instruction }}
+      <ul class="ingredients-list">
+        {% for item in recipe.ingredients %}
+          <li>
+            <div class="ingredient-line">
+              <span>
+                {{ item.amount }}
+                {{ item.unit }}
+                {{ item.ingredient }}
+              </span>
 
-    {% if step.time_min %}
-      <small>({{ step.time_min }} min)</small>
-    {% endif %}
-  </li>
-{% endfor %}
-</ol>
+              {% if item.optional %}
+                <em>Optional</em>
+              {% endif %}
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>Method</h2>
+
+      <ol class="method-list">
+        {% for step in recipe.steps %}
+          <li>
+            <div class="step-content">
+              <span>{{ step.instruction }}</span>
+
+              {% if step.time_min %}
+                <small>{{ step.time_min }} min</small>
+              {% endif %}
+            </div>
+          </li>
+        {% endfor %}
+      </ol>
+    </section>
+
+  </div>
+
+</div>
+
+<style>
+  body {
+    font-family: Inter, sans-serif;
+    background: #f7f7f7;
+    color: #222;
+    padding: 40px 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .recipe-page {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .recipe-hero {
+    background: white;
+    border: 1px solid #e5e5e5;
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+  }
+
+  .recipe-hero h1 {
+    margin: 0 0 20px;
+    font-size: 3rem;
+    line-height: 1.1;
+  }
+
+  .recipe-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+
+  .recipe-meta span {
+    background: #f3f3f3;
+    padding: 10px 14px;
+    border-radius: 999px;
+    font-size: 0.95rem;
+  }
+
+  .recipe-source {
+    margin: 0;
+    color: #666;
+    font-size: 0.95rem;
+  }
+
+  .content-grid {
+    display: grid;
+    gap: 24px;
+  }
+
+  .card {
+    background: white;
+    border: 1px solid #e5e5e5;
+    border-radius: 20px;
+    padding: 32px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.03);
+  }
+
+  .card h2 {
+    margin-top: 0;
+    margin-bottom: 24px;
+    font-size: 1.6rem;
+  }
+
+  .ingredients-list,
+  .method-list {
+    margin: 0;
+    padding-left: 22px;
+  }
+
+  .ingredients-list li,
+  .method-list li {
+    margin-bottom: 18px;
+    line-height: 1.7;
+  }
+
+  .ingredient-line,
+  .step-content {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    align-items: flex-start;
+  }
+
+  .ingredient-line em,
+  .step-content small {
+    color: #666;
+    white-space: nowrap;
+  }
+
+  .step-content small {
+    background: #f3f3f3;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+  }
+
+  @media (max-width: 640px) {
+    .recipe-hero {
+      padding: 28px 24px;
+    }
+
+    .card {
+      padding: 24px;
+    }
+
+    .recipe-hero h1 {
+      font-size: 2.2rem;
+    }
+
+    .ingredient-line,
+    .step-content {
+      flex-direction: column;
+      gap: 8px;
+    }
+  }
+</style>
 
 {% endblock %}
